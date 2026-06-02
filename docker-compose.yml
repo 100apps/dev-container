@@ -1,0 +1,12 @@
+services:
+  debian-dev:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: debian-trixie-ssh
+    ports:
+      - "8022:22"
+    volumes:
+      - /data:/data
+      - ~/.ssh:/root/.ssh:ro
+    restart: unless-stopped
