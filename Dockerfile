@@ -31,6 +31,7 @@ RUN apt-get update && \
         less \
         bubblewrap \
         procps \
+        docker-cli \
         bsdextrautils && \
     ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
