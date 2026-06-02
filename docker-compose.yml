@@ -9,4 +9,5 @@ services:
     volumes:
       - /data:/data
       - ~/.ssh:/root/.ssh:ro
+      - ~/.gitconfig:/root/.gitconfig:ro
     restart: unless-stopped
