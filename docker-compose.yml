@@ -1,5 +1,6 @@
 services:
   debian-dev:
+    image: ghcr.io/100apps/dev-container:latest
     build: 
       context: .
       dockerfile: Dockerfile

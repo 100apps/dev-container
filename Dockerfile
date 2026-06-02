@@ -68,15 +68,11 @@ RUN mkdir -p $NVM_DIR && \
     ln -sf "$NODE_BIN_DIR/npm"  /usr/local/bin/npm && \
     ln -sf "$NODE_BIN_DIR/npx"  /usr/local/bin/npx
 
-# 安装 gvm (Go Version Manager)
-RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)"
-
-# 让 SSH 登录 shell 自动加载 nvm 与 gvm 环境
+# 让 SSH 登录 shell 自动加载 nvm 环境
 RUN { \
         echo 'export NVM_DIR="/root/.nvm"'; \
         echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'; \
         echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"'; \
-        echo '[[ -s "/root/.gvm/scripts/gvm" ]] && source "/root/.gvm/scripts/gvm"'; \
         echo 'export PATH="/root/.local/bin:$PATH"'; \
     } >> /root/.bashrc && \
     echo '[ -f ~/.bashrc ] && . ~/.bashrc' > /root/.bash_profile
