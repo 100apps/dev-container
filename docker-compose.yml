@@ -1,15 +1,25 @@
 services:
   debian-dev:
+    network_mode: host
     image: ghcr.io/100apps/dev-container:latest
     build: 
       context: .
       dockerfile: Dockerfile
     container_name: debian-trixie-ssh
-    ports:
-      - "8022:22"
+    environment:
+      SSH_PORT: 8022
+      UV_DEFAULT_INDEX: https://pypi.tuna.tsinghua.edu.cn/simple
+      NVM_NODEJS_ORG_MIRROR: https://mirrors.tuna.tsinghua.edu.cn/nodejs-release/
+      NVM_SOURCE: https://mirrors.tuna.tsinghua.edu.cn/git/nvm.git
+      NPM_CONFIG_REGISTRY: https://registry.npmmirror.com
     volumes:
-      - /data:/data
+      - ./root/.claude:/root/.claude
+      - ./root/.codex:/root/.codex
+      - ./root/.gemini:/root/.gemini
+      - ./root/.cloudcli:/root/.cloudcli
+      - ./root/init.sh:/root/init.sh
       - ~/.ssh:/root/.ssh:ro
       - ~/.gitconfig:/root/.gitconfig:ro
+      - /data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped

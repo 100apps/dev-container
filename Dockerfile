@@ -4,6 +4,23 @@ FROM debian:trixie-backports
 RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/debian.sources 2>/dev/null || \
     sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 
+# 单一数据源:一处定义
+ARG UV_DEFAULT_INDEX=https://pypi.tuna.tsinghua.edu.cn/simple
+ARG NPM_CONFIG_REGISTRY=https://registry.npmmirror.com
+ARG NVM_NODEJS_ORG_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release/
+
+# 转成 ENV(运行时 + exec 生效)
+ENV UV_DEFAULT_INDEX=${UV_DEFAULT_INDEX} \
+    NVM_NODEJS_ORG_MIRROR=${NVM_NODEJS_ORG_MIRROR} \
+    NPM_CONFIG_REGISTRY=${NPM_CONFIG_REGISTRY}
+
+# 同样的值落盘到 /etc/environment(SSH 生效),引用 ARG 不重复写值
+RUN printf '%s\n' \
+    "UV_DEFAULT_INDEX=${UV_DEFAULT_INDEX}" \
+    "NVM_NODEJS_ORG_MIRROR=${NVM_NODEJS_ORG_MIRROR}" \
+    "NPM_CONFIG_REGISTRY=${NPM_CONFIG_REGISTRY}" \
+    >> /etc/environment
+
 # 时区与非交互式安装设置
 ENV TZ=Asia/Shanghai \
     DEBIAN_FRONTEND=noninteractive
@@ -14,6 +31,7 @@ RUN apt-get update && \
         openssh-server \
         ca-certificates \
         curl \
+	netcat-openbsd \
         wget \
         tzdata \
         locales \
@@ -80,5 +98,6 @@ RUN { \
     echo '[ -f ~/.bashrc ] && . ~/.bashrc' > /root/.bash_profile
 
 # 暴露端口并启动 SSH 服务
-EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+ENV SSH_PORT=22
+EXPOSE ${SSH_PORT}
+CMD ["sh", "-c", "exec /usr/sbin/sshd -D -e -p ${SSH_PORT}"]
