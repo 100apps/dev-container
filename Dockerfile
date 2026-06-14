@@ -34,6 +34,7 @@ RUN apt-get update && \
 	netcat-openbsd \
         wget \
         tzdata \
+	screen \
         locales \
         build-essential \
         git \
